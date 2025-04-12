@@ -1,0 +1,15 @@
+{
+  "name": "project-sadari",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Indy, Salsa, Elvira, Fani, Aisya",
+  "license": "ISC",
+  "description": "Platform SADARI adalah platform yang membantu wanita di Indonesia agar rutin melakukan kegiatan SADARI secara rutin, agar dapat mendeteksi sedini mungkin kanker payudara sehingga tidak mencapai tahap stadium akhir. Hal ini dilakukan agar kanker payudara dapat dilakukan pengobatan sedini mungkin sehingga tingkat kesembuhannya semakin tinggi.",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
