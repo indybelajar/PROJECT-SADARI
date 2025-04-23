@@ -1,6 +1,7 @@
 {
   "name": "project-sadari",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,6 +11,10 @@
   "license": "ISC",
   "description": "Platform SADARI adalah platform yang membantu wanita di Indonesia agar rutin melakukan kegiatan SADARI secara rutin, agar dapat mendeteksi sedini mungkin kanker payudara sehingga tidak mencapai tahap stadium akhir. Hal ini dilakukan agar kanker payudara dapat dilakukan pengobatan sedini mungkin sehingga tingkat kesembuhannya semakin tinggi.",
   "dependencies": {
-    "express": "^5.1.0"
+    "bcrypt": "^5.1.1",
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.13.2",
+    "nodemon": "^3.1.10"
   }
 }
