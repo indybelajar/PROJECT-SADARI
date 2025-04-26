@@ -1,4 +1,3 @@
-// db.js
 import mongoose from "mongoose";
 
 const adminDB = mongoose.createConnection('mongodb://localhost:27017/dbAdmin', {
@@ -11,16 +10,12 @@ const userDB = mongoose.createConnection('mongodb://localhost:27017/dbUser', {
     useUnifiedTopology: true
 });
 
-adminDB.on('error', (err) => {
-    console.error('AdminDB connection error:', err);
-});
+adminDB.on('error', console.error.bind(console, 'AdminDB connection error:'));
 adminDB.once('open', () => {
     console.log('Connected to dbAdmin!');
 });
 
-userDB.on('error', (err) => {
-    console.error('UserDB connection error:', err);
-});
+userDB.on('error', console.error.bind(console, 'UserDB connection error:'));
 userDB.once('open', () => {
     console.log('Connected to dbUser!');
 });
