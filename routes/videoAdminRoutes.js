@@ -18,9 +18,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Rute untuk upload video
-router.post('/upload', upload.single('video'), uploadVideo);
-router.get('/videos', getVideos);
-router.put('/videos/:id', updateVideo);
-router.delete('/videos/:id', deleteVideo);
+router.post('/', upload.single('video'), uploadVideo);
+router.get('/', getVideos);
+router.put('/:id', updateVideo);
+router.delete('/:id', deleteVideo);
 
 export default router;

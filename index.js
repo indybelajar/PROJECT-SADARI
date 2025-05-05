@@ -14,7 +14,7 @@ const app = express();
 app.use(express.json());
 
 app.use('/admin', adminLogRoutes);
-app.use('/api/v1/cek-sadari', cekSadariRoutes);
+app.use('/ceksadari', cekSadariRoutes);
 app.use('/user', userLogRoutes);
 app.use('/videoAdmin', videoAdminRoutes);
 app.use('/artikel', artikelAdminRoutes);

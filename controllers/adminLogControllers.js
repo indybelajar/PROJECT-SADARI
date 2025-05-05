@@ -3,14 +3,31 @@ import bcrypt from 'bcrypt';
 
 // REGISTER
 export const registAdmin = async (req, res) => {
+    const { username, email, password, confirmPassword } = req.body;
+
+    // Cek semua field terisi
+    if (!username || !email || !password || !confirmPassword) {
+        return res.status(400).json({ message: "Semua field wajib diisi!" });
+    }
+
+    // Validasi username: hanya huruf dan angka, tanpa spasi atau simbol
+    const usernameRegex = /^[a-zA-Z0-9]+$/;
+    if (!usernameRegex.test(username)) {
+        return res.status(400).json({ message: "Username hanya boleh berisi huruf dan angka, tanpa spasi dan simbol." });
+    }
+
+    // Cek apakah password dan confirm password cocok
+    if (password !== confirmPassword) {
+        return res.status(400).json({ message: "Konfirmasi password tidak cocok!" });
+    }
+
     try {
-        // Hash the password before saving
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         const newRegist = new Admin({
-            username: req.body.username,
-            email: req.body.email,
-            password: hashedPassword // Save the hashed password
+            username,
+            email,
+            password: hashedPassword
         });
 
         const savedRegist = await newRegist.save();

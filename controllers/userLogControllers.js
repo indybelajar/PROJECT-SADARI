@@ -1,21 +1,39 @@
 import User from '../models/userLog.js';
 import bcrypt from 'bcrypt';
 
-// REGISTER
 export const registUser = async (req, res) => {
+    const { username, email, password, confirmPassword } = req.body;
+
+    // Validasi username (hanya huruf, angka, underscore)
+    const usernameRegex = /^[a-zA-Z0-9_]+$/;
+    if (!usernameRegex.test(username)) {
+        return res.status(400).json({
+            message: "Username hanya boleh mengandung huruf, angka, dan underscore tanpa spasi atau karakter spesial."
+        });
+    }
+
+    // Validasi konfirmasi password
+    if (password !== confirmPassword) {
+        return res.status(400).json({
+            message: "Konfirmasi password tidak cocok dengan password."
+        });
+    }
+
     try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({
-            username: req.body.username,
-            email: req.body.email,
+            username,
+            email,
             password: hashedPassword
         });
+
         const savedUser = await newUser.save();
         res.status(201).json(savedUser);
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
 };
+
 
 // LOGIN
 export const loginUser = async (req, res) => {

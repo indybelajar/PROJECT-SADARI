@@ -1,12 +1,19 @@
-import mongoose from 'mongoose';
-import { adminDB } from '../database.js'; // koneksi DB admin
+import mongoose from "mongoose";
+import { adminDB } from "../database.js"; // Import dbAdmin
 
-const artikelSchema = new mongoose.Schema({
-    judul: { type: String, required: true },
-    konten: { type: String, required: true },
-    tanggal: { type: Date, default: Date.now }
-});
+const artikelAdminSchema = new mongoose.Schema({
+  judul: {
+    type: String,
+    required: true
+  },
+  konten: String,
+  file: {
+    type: String,
+    required: true
+  }
+}, { timestamps: true });
 
-const ArtikelAdmin = adminDB.model('ArtikelAdmin', artikelSchema); // Gunakan koneksi adminDB
+const Artikel = adminDB.model('Artikel', artikelAdminSchema);
 
-export default ArtikelAdmin;
+export default Artikel;
+
