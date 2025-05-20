@@ -2,11 +2,13 @@ import multer from "multer";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './uploads'); // Menyimpan file di folder 'uploads'
+    cb(null, './uploads');
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname); // Menyimpan file dengan nama unik
+    cb(null, Date.now() + '-' + file.originalname);
   }
 });
 
 const upload = multer({ storage });
+
+export default upload;
