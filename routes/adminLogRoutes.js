@@ -1,5 +1,5 @@
 import express from 'express';
-import { registAdmin, loginAdmin, getAllAdmin } from '../controllers/adminLogControllers.js'; // Ensure correct imports
+import { registAdmin, loginAdmin, getAllAdmin } from '../controllers/auth_controller.js'; // Ensure correct imports
 const router = express.Router();
 
 // Register a new admin

@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Artikel {
+  id        String   @id @default(cuid())  // gunakan cuid() untuk ID unik string
+  judul     String   // required
+  konten    String?  // optional
+  file      String   // required (hilangkan tanda ?)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum KemerahanEnum {
+  Tidak_ada_kemerahan
+  Terdapat_kemerahan
+}
+
+enum BenjolanEnum {
+  Tidak_ada_benjolan
+  Terdapat_benjolan
+}
+
+enum CairanEnum {
+  Tidak_ada_cairan
+  Cairan_ASI
+  Darah
+  Cairan_Lainnya
+}
+
+model CekSadari {
+  id         String         @id @default(cuid())  // ID unik string untuk PostgreSQL
+  kemerahan  KemerahanEnum
+  benjolan   BenjolanEnum
+  cairan     CairanEnum
+  createdAt  DateTime       @default(now())
+
+  @@map("CekSadari")
+}
+
+model User {
+  id         String   @id @default(cuid())
+  username   String   @unique
+  email      String   @unique
+  password   String
+  profilePic String?  // <- nullable, kalau user belum upload foto
+  role     Role     @default(USER)  // 
+  createdAt  DateTime @default(now())
+}
+
+
+enum Role {
+  USER
+  ADMIN
+}
+
+
+model Video {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  // optional
+  videoUrl    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("Video")
+}

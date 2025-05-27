@@ -1,26 +1,35 @@
 import express from "express";
 import multer from "multer";
-import { tambahArtikel, getAllArtikel, editArtikel, hapusArtikel} from "../controllers/artikelAdminController.js";
+import { tambahArtikel, getAllArtikel, editArtikel, hapusArtikel } from "../controllers/artikelAdminController.js";
+import { verifyToken, isAdmin } from "../middlewaree/authMiddleware.js";
 
 const router = express.Router();
 
-// Konfigurasi multer untuk menyimpan file di folder 'uploads'
+// Konfigurasi multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './uploads'); // Menyimpan file di folder 'uploads'
+    cb(null, './uploads');
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname); // Menyimpan file dengan nama unik
+    cb(null, Date.now() + '-' + file.originalname);
   }
 });
-
-// Menggunakan multer dengan konfigurasi di atas
 const upload = multer({ storage });
 
-// Rute untuk membuat artikel
-router.post('/', upload.single('file'), tambahArtikel);
+// Hanya admin yang boleh menambahkan artikel
+router.post(
+  '/',
+  verifyToken,
+  isAdmin,
+  upload.single('file'),
+  tambahArtikel
+);
+
+// Semua orang bisa lihat artikel
 router.get('/', getAllArtikel);
-router.put('/:id', editArtikel);
-router.delete('/:id', hapusArtikel);
+
+// Hanya admin bisa edit dan hapus
+router.put('/:id', verifyToken, isAdmin, editArtikel);
+router.delete('/:id', verifyToken, isAdmin, hapusArtikel);
 
 export default router;
