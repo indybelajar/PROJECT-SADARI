@@ -1,9 +1,10 @@
 import express from "express";
-import { createCekSadari } from "../controllers/cekSadariController.js";
+import { createCekSadari, getRiwayatCekSadari } from "../controllers/cekSadariController.js";
+import { verifyToken } from "../middlewaree/authMiddleware.js";
 
 const router = express.Router();
 
-// POST /api/v1/cek-sadari
-router.post('/cek', createCekSadari);
+router.post('/cek', verifyToken, createCekSadari);
+router.get('/riwayat', verifyToken, getRiwayatCekSadari);
 
 export default router;
