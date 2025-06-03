@@ -8,37 +8,45 @@ datasource db {
 }
 
 model Artikel {
-  id        String   @id @default(cuid())  // gunakan cuid() untuk ID unik string
-  judul     String   // required
-  konten    String?  // optional
-  file      String   // required (hilangkan tanda ?)
+  id        String   @id @default(cuid())
+  judul     String
+  konten    String?
+  file      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 enum KemerahanEnum {
-  Tidak_ada_kemerahan
-  Terdapat_kemerahan
+  ringan
+  sedang
+  parah
 }
 
 enum BenjolanEnum {
-  Tidak_ada_benjolan
-  Terdapat_benjolan
+  ringan
+  sedang
+  parah
 }
 
 enum CairanEnum {
-  Tidak_ada_cairan
-  Cairan_ASI
-  Darah
-  Cairan_Lainnya
+  ringan
+  sedang
+  parah
+}
+
+enum TingkatKeparahanEnum {
+  rendah
+  sedang
+  tinggi
 }
 
 model CekSadari {
-  id         String         @id @default(cuid())  // ID unik string untuk PostgreSQL
-  kemerahan  KemerahanEnum
-  benjolan   BenjolanEnum
-  cairan     CairanEnum
-  createdAt  DateTime       @default(now())
+  id                String                @id @default(cuid())
+  kemerahan         KemerahanEnum
+  benjolan          BenjolanEnum
+  cairan            CairanEnum
+  tingkatKeparahan  TingkatKeparahanEnum
+  createdAt         DateTime              @default(now())
 
   @@map("CekSadari")
 }
@@ -48,22 +56,20 @@ model User {
   username   String   @unique
   email      String   @unique
   password   String
-  profilePic String?  // <- nullable, kalau user belum upload foto
-  role     Role     @default(USER)  // 
+  profilePic String?
+  role       Role     @default(USER)
   createdAt  DateTime @default(now())
 }
-
 
 enum Role {
   USER
   ADMIN
 }
 
-
 model Video {
   id          String   @id @default(cuid())
   title       String
-  description String?  // optional
+  description String?
   videoUrl    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
