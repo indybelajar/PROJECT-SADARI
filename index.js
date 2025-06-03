@@ -7,6 +7,7 @@ import adminLogRoutes from './routes/adminLogRoutes.js';
 import videoAdminRoutes from './routes/videoAdminRoutes.js';
 import artikelAdminRoutes from './routes/artikelAdminRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
+import searchRoutes from './routes/searchRoutes.js';
 
 const app = express();
 app.use(express.json());
@@ -16,6 +17,7 @@ app.use('/ceksadari', cekSadariRoutes);
 app.use('/videoAdmin', videoAdminRoutes);
 app.use('/artikel', artikelAdminRoutes);
 app.use('/profile', profileRoutes); // ✅ tambahkan ini agar route update profil aktif
+app.use('/search', searchRoutes);
 
 console.log("Cloud Name (Index):", process.env.CLOUDINARY_CLOUD_NAME);
 console.log("API Key (Index):", process.env.CLOUDINARY_API_KEY);
