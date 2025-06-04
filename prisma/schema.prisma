@@ -48,6 +48,10 @@ model CekSadari {
   tingkatKeparahan  TingkatKeparahanEnum
   createdAt         DateTime              @default(now())
 
+// Relasi
+  userId            String
+  user              User                  @relation(fields: [userId], references: [id])
+
   @@map("CekSadari")
 }
 

@@ -18,6 +18,8 @@ app.use('/videoAdmin', videoAdminRoutes);
 app.use('/artikel', artikelAdminRoutes);
 app.use('/profile', profileRoutes); // ✅ tambahkan ini agar route update profil aktif
 app.use('/search', searchRoutes);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 
 console.log("Cloud Name (Index):", process.env.CLOUDINARY_CLOUD_NAME);
 console.log("API Key (Index):", process.env.CLOUDINARY_API_KEY);

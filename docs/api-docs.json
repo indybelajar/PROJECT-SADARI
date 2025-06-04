@@ -1,0 +1,491 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Sadari API Docs",
+    "version": "1.0.0",
+    "description": "Dokumentasi API untuk fitur-fitur SADARI"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Artikel",
+      "description": "Manajemen artikel edukasi"
+    },
+    {
+      "name": "Auth",
+      "description": "Autentikasi admin"
+    },
+    {
+      "name": "Sadari",
+      "description": "Fitur cek dan riwayat SADARI"
+    },
+    {
+      "name": "Profile",
+      "description": "Fitur update profil user"
+    },
+    {
+    "name": "Search",
+    "description": "Pencarian artikel dan video"
+    }
+  ],
+  "paths": {
+    "/artikel": {
+      "get": {
+        "summary": "Ambil semua artikel",
+        "tags": ["Artikel"],
+        "responses": {
+          "200": { "description": "Daftar artikel berhasil diambil" },
+          "500": { "description": "Terjadi kesalahan di server" }
+        }
+      },
+      "post": {
+        "summary": "Tambah artikel baru (admin saja)",
+        "tags": ["Artikel"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "judul": { "type": "string" },
+                  "konten": { "type": "string" },
+                  "file": { "type": "string", "format": "binary" }
+                },
+                "required": ["judul", "konten", "file"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Artikel berhasil ditambahkan" },
+          "400": { "description": "Permintaan tidak valid (form tidak lengkap)" },
+          "500": { "description": "Terjadi kesalahan di server" }
+        }
+      }
+    },
+    "/artikel/{id}": {
+      "put": {
+        "summary": "Edit artikel berdasarkan ID (admin saja)",
+        "tags": ["Artikel"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "judul": { "type": "string" },
+                  "konten": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Artikel berhasil diperbarui" },
+          "404": { "description": "Artikel tidak ditemukan" },
+          "500": { "description": "Terjadi kesalahan di server" }
+        }
+      },
+      "delete": {
+        "summary": "Hapus artikel berdasarkan ID (admin saja)",
+        "tags": ["Artikel"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Artikel berhasil dihapus" },
+          "404": { "description": "Artikel tidak ditemukan" },
+          "500": { "description": "Terjadi kesalahan di server" }
+        }
+      }
+    },
+    "/adminlog/register": {
+      "post": {
+        "summary": "Registrasi admin",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string" },
+                  "confirmPassword": { "type": "string" }
+                },
+                "required": ["username", "email", "password", "confirmPassword"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Registrasi berhasil" },
+          "400": { "description": "Permintaan tidak valid" },
+          "409": { "description": "Username sudah terdaftar" },
+          "500": { "description": "Terjadi kesalahan di server" }
+        }
+      }
+    },
+    "/adminlog/login": {
+      "post": {
+        "summary": "Login admin",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login berhasil" },
+          "401": { "description": "Email atau password salah" },
+          "500": { "description": "Login gagal" }
+        }
+      }
+    },
+    "/adminlog": {
+      "get": {
+        "summary": "Ambil semua data admin (hanya untuk admin)",
+        "tags": ["Auth"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Daftar admin berhasil diambil" },
+          "500": { "description": "Terjadi kesalahan di server" }
+        }
+      }
+    },
+    "/ceksadari/cek": {
+      "post": {
+        "summary": "Analisis cek SADARI (hanya untuk user login)",
+        "tags": ["Sadari"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "kemerahan": { "type": "string" },
+                  "benjolan": { "type": "string" },
+                  "cairan": { "type": "string" }
+                },
+                "required": ["kemerahan", "benjolan", "cairan"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Data cek SADARI berhasil disimpan dan dianalisis" },
+          "400": { "description": "Input tidak valid atau tidak lengkap" },
+          "500": { "description": "Terjadi kesalahan di server" }
+        }
+      }
+    },
+    "/ceksadari/riwayat": {
+      "get": {
+        "summary": "Ambil riwayat cek SADARI user (hanya untuk user login)",
+        "tags": ["Sadari"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Riwayat cek SADARI berhasil diambil" },
+          "500": { "description": "Gagal mengambil data" }
+        }
+      }
+    },
+    "/profile/update-profile/{id}": {
+      "put": {
+        "summary": "Update profil user (hanya untuk user login)",
+        "tags": ["Profile"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "email": { "type": "string" },
+                  "profilePic": { "type": "string", "format": "binary" },
+                  "oldPassword": { "type": "string" },
+                  "newPassword": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Profil berhasil diperbarui" },
+          "400": { "description": "Password lama salah atau data tidak valid" },
+          "404": { "description": "User tidak ditemukan" },
+          "500": { "description": "Terjadi kesalahan saat update" }
+        }
+      }
+    },
+    "/search": {
+      "get": {
+        "summary": "Cari artikel dan video berdasarkan kata kunci dengan pagination",
+        "tags": ["Search"],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Kata kunci pencarian (wajib)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Nomor halaman untuk pagination (default 1)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Jumlah data per halaman (default 10)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hasil pencarian artikel dan video",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "artikel": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "judul": { "type": "string" },
+                          "createdAt": { "type": "string", "format": "date-time" }
+                        }
+                      }
+                    },
+                    "video": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "title": { "type": "string" },
+                          "createdAt": { "type": "string", "format": "date-time" }
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "properties": {
+                        "page": { "type": "integer" },
+                        "limit": { "type": "integer" },
+                        "totalArtikel": { "type": "integer" },
+                        "totalVideo": { "type": "integer" },
+                        "timestamp": { "type": "string", "format": "date-time" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parameter pencarian tidak valid (misal 'q' kosong atau terlalu panjang)"
+          },
+          "500": {
+            "description": "Terjadi kesalahan di server saat proses pencarian"
+          }
+        }
+      }
+    },
+    "/videoAdmin": {
+  "get": {
+    "summary": "Ambil semua video",
+    "tags": ["Video - Admin"],
+    "responses": {
+      "200": {
+        "description": "Daftar semua video",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "string" },
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "videoUrl": { "type": "string", "format": "uri" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "500": {
+        "description": "Gagal mengambil data video"
+      }
+    }
+  },
+  "post": {
+    "summary": "Upload video (hanya untuk admin)",
+    "tags": ["Video - Admin"],
+    "security": [{ "bearerAuth": [] }],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "multipart/form-data": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "video": {
+                "type": "string",
+                "format": "binary",
+                "description": "File video yang akan diunggah"
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "required": ["video", "title", "description"]
+          }
+        }
+      }
+    },
+    "responses": {
+      "201": {
+        "description": "Video berhasil diunggah"
+      },
+      "400": {
+        "description": "Request tidak valid"
+      },
+      "500": {
+        "description": "Gagal saat proses upload"
+      }
+    }
+  }
+},
+"/videoAdmin/{id}": {
+  "put": {
+    "summary": "Update video (hanya untuk admin)",
+    "tags": ["Video - Admin"],
+    "security": [{ "bearerAuth": [] }],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string" },
+              "description": { "type": "string" }
+            },
+            "required": ["title", "description"]
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": { "description": "Video berhasil diupdate" },
+      "500": { "description": "Gagal update video" }
+    }
+  },
+  "delete": {
+    "summary": "Hapus video (hanya untuk admin)",
+    "tags": ["Video - Admin"],
+    "security": [{ "bearerAuth": [] }],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" }
+      }
+    ],
+    "responses": {
+      "200": { "description": "Video berhasil dihapus" },
+      "500": { "description": "Gagal hapus video" }
+    }
+  }
+}
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
