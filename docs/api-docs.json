@@ -29,8 +29,12 @@
       "description": "Fitur update profil user"
     },
     {
-    "name": "Search",
-    "description": "Pencarian artikel dan video"
+      "name": "Search",
+      "description": "Pencarian artikel dan video"
+    },
+    {
+      "name": "Video - Admin",
+      "description": "Manajemen video untuk admin"
     }
   ],
   "paths": {
@@ -188,45 +192,371 @@
         }
       }
     },
-    "/ceksadari/cek": {
-      "post": {
-        "summary": "Analisis cek SADARI (hanya untuk user login)",
-        "tags": ["Sadari"],
-        "security": [{ "bearerAuth": [] }],
-        "requestBody": {
-          "required": true,
+  "/ceksadari/cek": {
+    "post": {
+      "summary": "Analisis cek SADARI (hanya untuk user login)",
+      "tags": ["Sadari"],
+      "security": [{ "bearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "kemerahan": {
+                  "type": "string",
+                  "enum": ["ringan", "sedang", "parah"],
+                  "description": "Tingkat kemerahan"
+                },
+                "benjolan": {
+                  "type": "string",
+                  "enum": ["ringan", "sedang", "parah"],
+                  "description": "Tingkat benjolan"
+                },
+                "cairan": {
+                  "type": "string",
+                  "enum": ["ringan", "sedang", "parah"],
+                  "description": "Tingkat cairan"
+                },
+                "tanggal": {
+                  "type": "string",
+                  "format": "date",
+                  "description": "Tanggal cek SADARI (format YYYY-MM-DD)"
+                }
+              },
+              "required": ["kemerahan", "benjolan", "cairan", "tanggal"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Data cek SADARI berhasil disimpan dan dianalisis",
           "content": {
             "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "kemerahan": { "type": "string" },
-                  "benjolan": { "type": "string" },
-                  "cairan": { "type": "string" }
+              "example": {
+                "message": "Data cek SADARI berhasil disimpan!",
+                "data": {
+                  "id": 1,
+                  "kemerahan": "ringan",
+                  "benjolan": "sedang",
+                  "cairan": "parah",
+                  "tingkatKeparahan": "sedang",
+                  "tanggal": "2025-06-05T00:00:00.000Z",
+                  "userId": 123
                 },
-                "required": ["kemerahan", "benjolan", "cairan"]
+                "hasilAnalisis": {
+                  "tingkatKeparahan": "sedang",
+                  "detail": {
+                    "kemerahan": "ringan",
+                    "benjolan": "sedang",
+                    "cairan": "parah"
+                  }
+                }
               }
             }
           }
         },
-        "responses": {
-          "201": { "description": "Data cek SADARI berhasil disimpan dan dianalisis" },
-          "400": { "description": "Input tidak valid atau tidak lengkap" },
-          "500": { "description": "Terjadi kesalahan di server" }
+        "400": {
+          "description": "Input tidak valid atau tidak lengkap",
+          "content": {
+            "application/json": {
+              "example": {
+                "message": "Semua field harus diisi termasuk tanggal!"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Terjadi kesalahan di server",
+          "content": {
+            "application/json": {
+              "example": {
+                "message": "Server error!",
+                "error": "Error message detail"
+              }
+            }
+          }
         }
       }
     },
-    "/ceksadari/riwayat": {
-      "get": {
-        "summary": "Ambil riwayat cek SADARI user (hanya untuk user login)",
-        "tags": ["Sadari"],
-        "security": [{ "bearerAuth": [] }],
-        "responses": {
-          "200": { "description": "Riwayat cek SADARI berhasil diambil" },
-          "500": { "description": "Gagal mengambil data" }
+    "get": {
+      "summary": "Ambil data cek SADARI berdasarkan tanggal (hanya untuk user login)",
+      "tags": ["Sadari"],
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "tanggal",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "Tanggal cek SADARI yang ingin diambil (format YYYY-MM-DD)"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Data cek SADARI ditemukan",
+          "content": {
+            "application/json": {
+              "example": {
+                "message": "Data cek SADARI ditemukan",
+                "data": {
+                  "id": 1,
+                  "kemerahan": "ringan",
+                  "benjolan": "sedang",
+                  "cairan": "parah",
+                  "tingkatKeparahan": "sedang",
+                  "tanggal": "2025-06-05T00:00:00.000Z",
+                  "userId": 123
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Parameter tanggal wajib diisi",
+          "content": {
+            "application/json": {
+              "example": {
+                "message": "Parameter tanggal wajib diisi!"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Data tidak ditemukan untuk tanggal tersebut",
+          "content": {
+            "application/json": {
+              "example": {
+                "message": "Data tidak ditemukan untuk tanggal tersebut"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Gagal mengambil data",
+          "content": {
+            "application/json": {
+              "example": {
+                "message": "Gagal mengambil data",
+                "error": "Error message detail"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/ceksadari/riwayat": {
+    "get": {
+      "summary": "Ambil riwayat cek SADARI user (hanya untuk user login)",
+      "tags": ["Sadari"],
+      "security": [{ "bearerAuth": [] }],
+      "responses": {
+        "200": {
+          "description": "Riwayat cek SADARI berhasil diambil",
+          "content": {
+            "application/json": {
+              "example": {
+                "message": "Riwayat cek SADARI berhasil diambil",
+                "data": [
+                  {
+                    "id": 3,
+                    "kemerahan": "sedang",
+                    "benjolan": "ringan",
+                    "cairan": "ringan",
+                    "tingkatKeparahan": "rendah",
+                    "tanggal": "2025-06-04T00:00:00.000Z",
+                    "userId": 123
+                  },
+                  {
+                    "id": 1,
+                    "kemerahan": "ringan",
+                    "benjolan": "sedang",
+                    "cairan": "parah",
+                    "tingkatKeparahan": "sedang",
+                    "tanggal": "2025-06-01T00:00:00.000Z",
+                    "userId": 123
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Gagal mengambil data",
+          "content": {
+            "application/json": {
+              "example": {
+                "message": "Gagal mengambil data",
+                "error": "Error message detail"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/ceksadari/cek/{id}": {
+    "put": {
+      "summary": "Update data cek SADARI berdasarkan ID (hanya untuk user login)",
+      "tags": ["Sadari"],
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" },
+          "description": "ID data cek SADARI yang akan diupdate"
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "kemerahan": {
+                  "type": "string",
+                  "enum": ["ringan", "sedang", "parah"],
+                  "description": "Tingkat kemerahan"
+                },
+                "benjolan": {
+                  "type": "string",
+                  "enum": ["ringan", "sedang", "parah"],
+                  "description": "Tingkat benjolan"
+                },
+                "cairan": {
+                  "type": "string",
+                  "enum": ["ringan", "sedang", "parah"],
+                  "description": "Tingkat cairan"
+                },
+                "tanggal": {
+                  "type": "string",
+                  "format": "date",
+                  "description": "Tanggal cek SADARI (format YYYY-MM-DD)"
+                }
+              },
+              "required": ["kemerahan", "benjolan", "cairan", "tanggal"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Data cek SADARI berhasil diupdate",
+          "content": {
+            "application/json": {
+              "example": {
+                "message": "Data cek SADARI berhasil diupdate!",
+                "data": {
+                  "id": 1,
+                  "kemerahan": "ringan",
+                  "benjolan": "sedang",
+                  "cairan": "parah",
+                  "tingkatKeparahan": "sedang",
+                  "tanggal": "2025-06-05T00:00:00.000Z",
+                  "userId": 123
+                },
+                "hasilAnalisis": {
+                  "tingkatKeparahan": "sedang",
+                  "detail": {
+                    "kemerahan": "ringan",
+                    "benjolan": "sedang",
+                    "cairan": "parah"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Input tidak valid atau tidak lengkap",
+          "content": {
+            "application/json": {
+              "example": {
+                "message": "Semua field harus diisi termasuk tanggal!"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Data tidak ditemukan atau bukan milik user",
+          "content": {
+            "application/json": {
+              "example": {
+                "message": "Data tidak ditemukan atau bukan milik user"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Terjadi kesalahan di server",
+          "content": {
+            "application/json": {
+              "example": {
+                "message": "Server error!",
+                "error": "Error message detail"
+              }
+            }
+          }
         }
       }
     },
+    "delete": {
+      "summary": "Hapus data cek SADARI berdasarkan ID (hanya untuk user login)",
+      "tags": ["Sadari"],
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" },
+          "description": "ID data cek SADARI yang akan dihapus"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Data cek SADARI berhasil dihapus",
+          "content": {
+            "application/json": {
+              "example": {
+                "message": "Data cek SADARI berhasil dihapus"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Data tidak ditemukan atau bukan milik user",
+          "content": {
+            "application/json": {
+              "example": {
+                "message": "Data tidak ditemukan atau bukan milik user"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Gagal menghapus data",
+          "content": {
+            "application/json": {
+              "example": {
+                "message": "Gagal menghapus data",
+                "error": "Error message detail"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
     "/profile/update-profile/{id}": {
       "put": {
         "summary": "Update profil user (hanya untuk user login)",
@@ -358,126 +688,126 @@
       }
     },
     "/videoAdmin": {
-  "get": {
-    "summary": "Ambil semua video",
-    "tags": ["Video - Admin"],
-    "responses": {
-      "200": {
-        "description": "Daftar semua video",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": { "type": "string" },
-                  "title": { "type": "string" },
-                  "description": { "type": "string" },
-                  "videoUrl": { "type": "string", "format": "uri" }
+      "get": {
+        "summary": "Ambil semua video",
+        "tags": ["Video - Admin"],
+        "responses": {
+          "200": {
+            "description": "Daftar semua video",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string" },
+                      "title": { "type": "string" },
+                      "description": { "type": "string" },
+                      "videoUrl": { "type": "string", "format": "uri" }
+                    }
+                  }
                 }
               }
             }
+          },
+          "500": {
+            "description": "Gagal mengambil data video"
           }
         }
       },
-      "500": {
-        "description": "Gagal mengambil data video"
-      }
-    }
-  },
-  "post": {
-    "summary": "Upload video (hanya untuk admin)",
-    "tags": ["Video - Admin"],
-    "security": [{ "bearerAuth": [] }],
-    "requestBody": {
-      "required": true,
-      "content": {
-        "multipart/form-data": {
-          "schema": {
-            "type": "object",
-            "properties": {
-              "video": {
-                "type": "string",
-                "format": "binary",
-                "description": "File video yang akan diunggah"
-              },
-              "title": {
-                "type": "string"
-              },
-              "description": {
-                "type": "string"
+      "post": {
+        "summary": "Upload video (hanya untuk admin)",
+        "tags": ["Video - Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "video": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "File video yang akan diunggah"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "required": ["video", "title", "description"]
               }
-            },
-            "required": ["video", "title", "description"]
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Video berhasil diunggah"
+          },
+          "400": {
+            "description": "Request tidak valid"
+          },
+          "500": {
+            "description": "Gagal saat proses upload"
           }
         }
       }
     },
-    "responses": {
-      "201": {
-        "description": "Video berhasil diunggah"
-      },
-      "400": {
-        "description": "Request tidak valid"
-      },
-      "500": {
-        "description": "Gagal saat proses upload"
-      }
-    }
-  }
-},
-"/videoAdmin/{id}": {
-  "put": {
-    "summary": "Update video (hanya untuk admin)",
-    "tags": ["Video - Admin"],
-    "security": [{ "bearerAuth": [] }],
-    "parameters": [
-      {
-        "name": "id",
-        "in": "path",
-        "required": true,
-        "schema": { "type": "string" }
-      }
-    ],
-    "requestBody": {
-      "required": true,
-      "content": {
-        "application/json": {
-          "schema": {
-            "type": "object",
-            "properties": {
-              "title": { "type": "string" },
-              "description": { "type": "string" }
-            },
-            "required": ["title", "description"]
+    "/videoAdmin/{id}": {
+      "put": {
+        "summary": "Update video (hanya untuk admin)",
+        "tags": ["Video - Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
           }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "description": { "type": "string" }
+                },
+                "required": ["title", "description"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Video berhasil diupdate" },
+          "500": { "description": "Gagal update video" }
+        }
+      },
+      "delete": {
+        "summary": "Hapus video (hanya untuk admin)",
+        "tags": ["Video - Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Video berhasil dihapus" },
+          "500": { "description": "Gagal hapus video" }
         }
       }
-    },
-    "responses": {
-      "200": { "description": "Video berhasil diupdate" },
-      "500": { "description": "Gagal update video" }
     }
-  },
-  "delete": {
-    "summary": "Hapus video (hanya untuk admin)",
-    "tags": ["Video - Admin"],
-    "security": [{ "bearerAuth": [] }],
-    "parameters": [
-      {
-        "name": "id",
-        "in": "path",
-        "required": true,
-        "schema": { "type": "string" }
-      }
-    ],
-    "responses": {
-      "200": { "description": "Video berhasil dihapus" },
-      "500": { "description": "Gagal hapus video" }
-    }
-  }
-}
   },
   "components": {
     "securitySchemes": {

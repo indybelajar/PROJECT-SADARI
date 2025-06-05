@@ -7,15 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Artikel {
-  id        String   @id @default(cuid())
-  judul     String
-  konten    String?
-  file      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 enum KemerahanEnum {
   ringan
   sedang
@@ -40,34 +31,45 @@ enum TingkatKeparahanEnum {
   tinggi
 }
 
-model CekSadari {
-  id                String                @id @default(cuid())
-  kemerahan         KemerahanEnum
-  benjolan          BenjolanEnum
-  cairan            CairanEnum
-  tingkatKeparahan  TingkatKeparahanEnum
-  createdAt         DateTime              @default(now())
-
-// Relasi
-  userId            String
-  user              User                  @relation(fields: [userId], references: [id])
-
-  @@map("CekSadari")
-}
-
-model User {
-  id         String   @id @default(cuid())
-  username   String   @unique
-  email      String   @unique
-  password   String
-  profilePic String?
-  role       Role     @default(USER)
-  createdAt  DateTime @default(now())
-}
-
 enum Role {
   USER
   ADMIN
+}
+
+model User {
+  id         String       @id @default(cuid())
+  username   String       @unique
+  email      String       @unique
+  password   String
+  profilePic String?
+  role       Role         @default(USER)
+  createdAt  DateTime     @default(now())
+  cekSadari  CekSadari[]  // Relasi balik dari CekSadari ke User
+}
+
+model CekSadari {
+  id               String               @id @default(uuid())
+  kemerahan        KemerahanEnum
+  benjolan         BenjolanEnum
+  cairan           CairanEnum
+  tingkatKeparahan TingkatKeparahanEnum
+  tanggal          DateTime
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  userId String
+  user   User                 @relation(fields: [userId], references: [id])
+
+  @@unique([userId, tanggal]) // Satu user hanya bisa punya satu data per tanggal
+}
+
+model Artikel {
+  id        String   @id @default(cuid())
+  judul     String
+  konten    String?
+  file      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Video {
