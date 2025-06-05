@@ -42,11 +42,21 @@ async function initializeApp() {
 
     // Pastikan semua inisialisasi async lainnya (jika ada) berada di sini juga.
     // Contoh: koneksi DB yang perlu await, dll.
-}
 
 // Panggil fungsi inisialisasi secara asinkron di awal modul
 // Kita tidak bisa pakai await di top level karena export app akan menunggu
 // Serverless-http akan menunggu export default app;
-initializeApp();
+
+   console.log("Aplikasi siap dan berjalan.");
+}
+await initializeApp();
+
+if (process.env.NODE_ENV !== 'production' || process.env.IS_LOCAL) { // Tambahkan IS_LOCAL jika ingin lebih spesifik
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`Server is running locally on port ${PORT}`);
+    });
+}
+// --------------------------------------------------------
 
 export default app; // Export app segera setelah didefinisikan
