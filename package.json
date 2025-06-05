@@ -11,7 +11,7 @@
   "license": "ISC",
   "description": "Platform SADARI adalah platform yang membantu wanita di Indonesia agar rutin melakukan kegiatan SADARI secara rutin, agar dapat mendeteksi sedini mungkin kanker payudara sehingga tidak mencapai tahap stadium akhir. Hal ini dilakukan agar kanker payudara dapat dilakukan pengobatan sedini mungkin sehingga tingkat kesembuhannya semakin tinggi.",
   "dependencies": {
-    "@prisma/client": "^6.8.2",
+    "@prisma/client": "^6.9.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^2.2.0",
     "cloudinary": "^2.6.0",
@@ -21,10 +21,11 @@
     "mongoose": "^8.14.0",
     "multer": "^1.4.5-lts.2",
     "nodemon": "^3.1.10",
+    "serverless-http": "^3.2.0",
     "swagger-ui-express": "^5.0.1",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "prisma": "^6.8.2"
+    "prisma": "^6.9.0"
   }
 }

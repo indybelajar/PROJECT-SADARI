@@ -8,6 +8,8 @@ import videoAdminRoutes from './routes/videoAdminRoutes.js';
 import artikelAdminRoutes from './routes/artikelAdminRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
 import searchRoutes from './routes/searchRoutes.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from './docs/api-docs.json' assert { type: 'json' };
 
 const app = express();
 app.use(express.json());
@@ -25,7 +27,5 @@ console.log("Cloud Name (Index):", process.env.CLOUDINARY_CLOUD_NAME);
 console.log("API Key (Index):", process.env.CLOUDINARY_API_KEY);
 console.log("API Secret (Index):", process.env.CLOUDINARY_API_SECRET);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+export default app;
+

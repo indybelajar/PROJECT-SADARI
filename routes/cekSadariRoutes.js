@@ -5,14 +5,14 @@ import {
   getRiwayatCekSadari,
   getCekSadariByTanggal,
   deleteCekSadariById
-} from './controllers/cekSadariController.js'; // sesuaikan path filenya
+} from '../controllers/cekSadariController.js';
 
-import { authenticateUser } from './middlewares/auth.js'; // middleware autentikasi (contoh)
+import { verifyToken, isAdmin } from '../middlewaree/authMiddleware.js';
 
 const router = express.Router();
 
 // Semua route di bawah ini butuh user sudah login (contoh pakai middleware authenticateUser)
-router.use(authenticateUser);
+router.use(verifyToken, isAdmin);
 
 // Create or Update berdasarkan tanggal
 router.post('/ceksadari/cek', createOrUpdateCekSadari);
