@@ -15,18 +15,18 @@ const router = express.Router();
 router.use(verifyToken, isAdmin);
 
 // Create or Update berdasarkan tanggal
-router.post('/ceksadari/cek', createOrUpdateCekSadari);
+router.post('/cek', createOrUpdateCekSadari);
 
 // Update berdasarkan ID (PUT /ceksadari/cek/:id)
-router.put('/ceksadari/cek/:id', updateCekSadariById);
+router.put('/cek/:id', updateCekSadariById);
 
 // Get riwayat cek SADARI user
-router.get('/ceksadari/riwayat', getRiwayatCekSadari);
+router.get('/riwayat', getRiwayatCekSadari);
 
 // Get cek SADARI berdasarkan tanggal
-router.get('/ceksadari/cek', getCekSadariByTanggal);
+router.get('/cek', getCekSadariByTanggal);
 
 // Delete cek SADARI berdasarkan ID
-router.delete('/ceksadari/cek/:id', deleteCekSadariById);
+router.delete('/cek/:id', deleteCekSadariById);
 
 export default router;
