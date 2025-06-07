@@ -14,11 +14,12 @@ import searchRoutes from '../routes/searchRoutes.js';
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:5173',
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
-}));
-app.use(express.json());
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // tambahin ini!
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+  }));
+  
 
 app.use('/admin', adminLogRoutes);
 app.use('/ceksadari', cekSadariRoutes);
